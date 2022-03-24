@@ -9,9 +9,11 @@ public class MainManager : MonoBehaviour
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
+    public static MainManager Instance;
 
     public Text ScoreText;
     public GameObject GameOverText;
+    public string YourNameHere; 
     
     private bool m_Started = false;
     private int m_Points;
@@ -72,5 +74,10 @@ public class MainManager : MonoBehaviour
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+    }
+
+    public void StartGame()
+    {
+        SceneManager.LoadScene(1);
     }
 }
