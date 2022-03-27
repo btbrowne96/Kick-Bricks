@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.IO;
 
 public class MainManager : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class MainManager : MonoBehaviour
     
     private bool m_Started = false;
     private int m_Points;
+    public int bestPoints;
     public Text Records;
     
     private bool m_GameOver = false;
@@ -25,6 +27,7 @@ public class MainManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        LoadBest();
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -42,7 +45,7 @@ public class MainManager : MonoBehaviour
 
         if (YourNameHere != null)
         {
-            Records.text = $"Best:    {YourNameHere}: {m_Points}";
+            Records.text = $"Best:  {bestPoints}    {YourNameHere}: {m_Points}";
         }
     }
 
@@ -73,7 +76,12 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        Records.text = $"Best:    {YourNameHere}: {m_Points}";
+        if (m_Points > bestPoints)
+        {
+            bestPoints = m_Points;
+            this.SaveBest();
+        }
+        Records.text = $"Best: {bestPoints}    {YourNameHere}: {m_Points}";
     }
 
     public void GameOver()
@@ -91,5 +99,31 @@ public class MainManager : MonoBehaviour
     {
         YourNameHere = NameEntry.text;
     }
-        
+
+    [System.Serializable]
+    class SaveData
+    {
+        public int bestPoints;
+    } 
+    public void SaveBest()
+    {
+        SaveData data = new SaveData();
+        data.bestPoints = bestPoints;
+
+        string json = JsonUtility.ToJson(data);
+
+        File.WriteAllText(Application.persistentDataPath + "/savefile.json", json);
+    }
+
+    public void LoadBest()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            string json = File.ReadAllText(path);
+            SaveData data = JsonUtility.FromJson<SaveData>(json);
+
+            bestPoints = data.bestPoints;
+        }
+    }
 }
