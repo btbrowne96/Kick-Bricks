@@ -11,12 +11,13 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
     public static MainManager Instance;
 
-    public Text ScoreText;
     public GameObject GameOverText;
-    public string YourNameHere; 
+    public InputField NameEntry;
+    public static string YourNameHere; 
     
     private bool m_Started = false;
     private int m_Points;
+    public Text Records;
     
     private bool m_GameOver = false;
 
@@ -37,6 +38,11 @@ public class MainManager : MonoBehaviour
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
             }
+        }
+
+        if (YourNameHere != null)
+        {
+            Records.text = $"Best:    {YourNameHere}: {m_Points}";
         }
     }
 
@@ -67,7 +73,7 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        Records.text = $"Best:    {YourNameHere}: {m_Points}";
     }
 
     public void GameOver()
@@ -80,4 +86,10 @@ public class MainManager : MonoBehaviour
     {
         SceneManager.LoadScene(1);
     }
+
+    public void NewName()
+    {
+        YourNameHere = NameEntry.text;
+    }
+        
 }
